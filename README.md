@@ -1,1 +1,2 @@
-# gustavsjokvist.github.io
+# Idle factory game! 
+## Hopefully this will work
