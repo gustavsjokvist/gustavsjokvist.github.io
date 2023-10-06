@@ -97,21 +97,13 @@ function purchaseUpgrade(upgradeKey) {
     for (const resource in upgrade.cost) {
         resources[resource] -= upgrade.cost[resource];
     }
-
+    
     upgrade.purchased = true;
 
-   if (upgrade.actionChange) {
-        let prevBtn = document.getElementById(`${upgrade.actionChange.prev}Btn`);
-        let nextBtn = document.getElementById(`${upgrade.actionChange.next}Btn`);
-        if (!prevBtn || !nextBtn) {
-            console.error(`Buttons for action change not found: ${upgrade.actionChange.prev} or ${upgrade.actionChange.next}`);
-            return;
-        }
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'block';
-
-        // IMPORTANT: Attach event listener to new action button!
-        nextBtn.addEventListener('click', () => performAction(upgrade.actionChange.next));
+    // Logic for changing actions if applicable
+    if (upgrade.actionChange) {
+        document.getElementById(`${upgrade.actionChange.prev}Btn`).style.display = 'none';
+        document.getElementById(`${upgrade.actionChange.next}Btn`).style.display = 'block';
     }
 
     // Logic for unlocking resources
@@ -124,8 +116,10 @@ function purchaseUpgrade(upgradeKey) {
         });
     }
     
+    // Update the display after resources have been deducted
     updateResourceDisplay();
 }
+
 
 
 function buildItem(item) {
