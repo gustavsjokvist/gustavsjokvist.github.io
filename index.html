@@ -16,13 +16,15 @@
 <body>
 
     <button id="gatherStickBtn">Gather Stick</button>
-    <button id="gatherRockBtn">Gather Rock</button>
-    <!-- Additional action buttons should be added as they become available -->
-    <button id="mineIronOreBtn" style="display:none;">Mine Iron Ore</button>
+    <progress id="gatherStickProgress" max="100" value="0"></progress>
     
-    <progress id="gatherStickProgress" max="100" value="0" style="width:100%; display:none;"></progress>
-    <progress id="gatherRockProgress" max="100" value="0" style="width:100%; display:none;"></progress>
-    <progress id="mineIronOreProgress" max="100" value="0" style="width:100%; display:none;"></progress>
+    <button id="gatherRockBtn">Gather Rock</button>
+    <progress id="gatherRockProgress" max="100" value="0"></progress>
+    
+    <button id="mineIronOreBtn" style="display:none;">Mine Iron Ore</button>
+    <progress id="mineIronOreProgress" max="100" value="0"></progress>
+    <!-- ... and so on for each action button ... -->
+
 
     
     <p id="woodCount">Wood: 0</p>
