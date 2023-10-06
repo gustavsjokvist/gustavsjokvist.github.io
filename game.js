@@ -1,101 +1,181 @@
 let resources = {
     wood: 0,
-    stone: 0
+    stone: 0,
+    charcoal: 0,
+    ironOre: 0,
+    ironBar: 0
 };
 
-let isGathering = {
-    wood: false,
-    stone: false
-};
-
-function gatherResource(type) {
-    if (!isGathering[type]) {
-        isGathering[type] = true;
-        let progress = 0;
-        const progressBar = document.getElementById(`${type}Progress`);
-        
-        const gatheringInterval = setInterval(() => {
-            progress += 10; // Filling the progress bar by 10% each 100ms
-            progressBar.value = progress;
-            
-            if (progress >= 100) {
-                clearInterval(gatheringInterval); // Stop interval
-                resources[type]++; // Add resource
-                document.getElementById(type).innerText = resources[type]; // Update display
-                progressBar.value = 0; // Reset progress bar
-                isGathering[type] = false; // Enable gathering again
-            }
-        }, 100); // Repeat every 100ms
+let upgrades = {
+    stoneAxe: {
+        cost: { wood: 10, stone: 10 },
+        purchased: false,
+        actionChange: { prev: "gatherStick", next: "chopSapling", newValue: 2 },
+        resourceChange: { resource: "wood", newIncrement: 2 }
+    },
+    stonePickaxe: {
+        cost: { wood: 10, stone: 10 },
+        purchased: false,
+        actionChange: { prev: "gatherRock", next: "mineStone", newValue: 2 },
+        resourceChange: { resource: "stone", newIncrement: 2 },
+        unlocks: ['ironOre']
+    },
+    furnace: {
+        cost: { stone: 10 },
+        purchased: false
     }
+};
+
+let items = {
+    hammer: false,
+    anvil: false
+};
+
+let resourceCosts = {
+    hammer: { ironBar: 3, wood: 20 },
+    anvil: { ironBar: 10 }
+};
+
+let actions = {
+    gatherStick: false,
+    gatherRock: false,
+    chopSapling: false,
+    mineStone: false
+};
+
+function performAction(action) {
+    if (actions[action]) return;  // Prevent action if it's already in progress
+
+    actions[action] = true;  // Mark action as in-progress
+    let actionDuration = 1000;  // Action takes 1000ms to perform
+
+    setTimeout(() => {
+        switch (action) {
+            case "gatherStick":
+                resources.wood += 1;
+                break;
+            case "gatherRock":
+                resources.stone += 1;
+                break;
+            case "chopSapling":
+                resources.wood += upgrades.stoneAxe.resourceChange.newIncrement;
+                break;
+            case "mineStone":
+                resources.stone += upgrades.stonePickaxe.resourceChange.newIncrement;
+                break;
+            case "mineIronOre":
+                resources.ironOre += 1;
+                break;
+            // ... Other actions as they get defined ...
+        }
+        actions[action] = false;  // Mark action as complete
+        updateResourceDisplay();
+    }, actionDuration);
+}
+
+function purchaseUpgrade(upgradeKey) {
+    let upgrade = upgrades[upgradeKey];
+
+    if (upgrade.purchased || !canAfford(upgrade.cost)) {
+        return;
+    }
+
+    // Deduct the cost of the upgrade from the player's resources
+    for (const resource in upgrade.cost) {
+        resources[resource] -= upgrade.cost[resource];
+    }
+
+    upgrade.purchased = true;
+
+    // Logic for changing actions if applicable
+    if (upgrade.actionChange) {
+        document.getElementById(`${upgrade.actionChange.prev}Btn`).style.display = 'none';
+        document.getElementById(`${upgrade.actionChange.next}Btn`).style.display = 'block';
+    }
+
+    // Logic for unlocking resources
+    if (upgrade.unlocks) {
+        upgrade.unlocks.forEach(resource => {
+            document.getElementById(`${resource}Count`).style.display = 'block';
+            if (resource === "ironOre") {
+                document.getElementById('mineIronOreBtn').style.display = 'block';
+            }
+        });
+    }
+    
+    updateResourceDisplay();
 }
 
 
+function buildItem(item) {
+    let canBuild = true;
 
-let upgrades = {
-    stoneAxe: {cost: {wood: 10, stone: 10}, purchased: false, requirement: 5},
-    stonePickaxe: {cost: {wood: 10, stone: 10}, purchased: false, requirement: 5}
-};
-
-function purchaseUpgrade(upgrade) {
-    if (!upgrades[upgrade].purchased &&
-        resources.wood >= upgrades[upgrade].cost.wood &&
-        resources.stone >= upgrades[upgrade].cost.stone) {
-        
-        resources.wood -= upgrades[upgrade].cost.wood;
-        resources.stone -= upgrades[upgrade].cost.stone;
-        
-        upgrades[upgrade].purchased = true;
-        document.getElementById(upgrade).style.display = "none";
-        
-        if (upgrade === 'stoneAxe') {
-            document.querySelector("button[onclick=\"gatherResource('wood')\"]").innerText = "Chop Sapling";
-            document.querySelector("p:contains('Change \"Gather Stick\" to \"Chop Sapling\"')").style.display = "none";
-        } else if (upgrade === 'stonePickaxe') {
-            document.querySelector("button[onclick=\"gatherResource('stone')\"]").innerText = "Mine Stone";
-            document.querySelector("p:contains('Change \"Gather Rock\" to \"Mine Stone\"')").style.display = "none";
+    for (const resource in resourceCosts[item]) {
+        if (resources[resource] < resourceCosts[item][resource]) {
+            canBuild = false;
+            break;
         }
+    }
 
+    if (canBuild) {
+        items[item] = true;
+        for (const resource in resourceCosts[item]) {
+            resources[resource] -= resourceCosts[item][resource];
+        }
         updateResourceDisplay();
     }
 }
 
-
-function updateResourceDisplay() {
-    document.getElementById('wood').innerText = resources.wood;
-    document.getElementById('stone').innerText = resources.stone;
-
-    let showStoneAxe = resources.wood >= upgrades.stoneAxe.requirement && resources.stone >= upgrades.stoneAxe.requirement && !upgrades.stoneAxe.purchased;
-    let showStonePickaxe = resources.wood >= upgrades.stonePickaxe.requirement && resources.stone >= upgrades.stonePickaxe.requirement && !upgrades.stonePickaxe.purchased;
-
-    document.getElementById('stoneAxe').style.display = showStoneAxe ? "block" : "none";
-    document.getElementById('stoneAxeInfo').style.display = showStoneAxe ? "block" : "none";
-    
-    document.getElementById('stonePickaxe').style.display = showStonePickaxe ? "block" : "none";
-    document.getElementById('stonePickaxeInfo').style.display = showStonePickaxe ? "block" : "none";
-    
-    document.getElementById('stoneAxe').disabled = resources.wood < upgrades.stoneAxe.cost.wood || resources.stone < upgrades.stoneAxe.cost.stone;
-    document.getElementById('stonePickaxe').disabled = resources.wood < upgrades.stonePickaxe.cost.wood || resources.stone < upgrades.stonePickaxe.cost.stone;
-}
-
-function gatherResource(type) {
-    if (!isGathering[type]) {
-        isGathering[type] = true;
-        let progress = 0;
-        const progressBar = document.getElementById(`${type}Progress`);
-        
-        const gatheringInterval = setInterval(() => {
-            progress += 10; 
-            progressBar.value = progress;
-            
-            if (progress >= 100) {
-                clearInterval(gatheringInterval); 
-                const gatherAmount = (type === 'wood' && upgrades.stoneAxe.purchased) || (type === 'stone' && upgrades.stonePickaxe.purchased) ? 2 : 1;
-                resources[type] += gatherAmount; 
-                progressBar.value = 0; 
-                isGathering[type] = false; 
-                
-                updateResourceDisplay();
-            }
-        }, 100); 
+function smeltIron() {
+    if (resources.ironOre >= 2 && resources.charcoal >= 2) {
+        resources.ironOre -= 2;
+        resources.charcoal -= 2;
+        resources.ironBar += 1;
+        updateResourceDisplay();
     }
 }
+
+function updateResourceDisplay() {
+    document.getElementById('woodCount').innerText = `Wood: ${resources.wood}`;
+    document.getElementById('stoneCount').innerText = `Stone: ${resources.stone}`;
+    document.getElementById('charcoalCount').innerText = `Charcoal: ${resources.charcoal}`;
+    document.getElementById('ironOreCount').innerText = `Iron Ore: ${resources.ironOre}`;
+    document.getElementById('ironBarCount').innerText = `Iron Bar: ${resources.ironBar}`;
+
+    // Upgrade buttons: Display and enable/disable based on conditions
+    for (const upgradeKey in upgrades) {
+        const upgrade = upgrades[upgradeKey];
+        document.getElementById(`${upgradeKey}Btn`).style.display = canAfford(upgrade.cost) && !upgrade.purchased ? 'block' : 'none';
+    }
+
+    // Item buttons: Display and enable/disable based on conditions
+    document.getElementById('buildHammer').style.display = canAfford(resourceCosts.hammer) && !items.hammer ? 'block' : 'none';
+    document.getElementById('hammerInfo').style.display = !items.hammer ? 'block' : 'none';
+
+    document.getElementById('buildAnvil').style.display = canAfford(resourceCosts.anvil) && items.hammer && !items.anvil ? 'block' : 'none';
+    document.getElementById('anvilInfo').style.display = items.hammer && !items.anvil ? 'block' : 'none';
+}
+
+function canAfford(cost) {
+    for (const resource in cost) {
+        if (resources[resource] < cost[resource]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Event listeners
+document.getElementById('gatherStickBtn').addEventListener('click', () => performAction('gatherStick'));
+document.getElementById('gatherRockBtn').addEventListener('click', () => performAction('gatherRock'));
+
+document.getElementById('stoneAxeBtn').addEventListener('click', () => purchaseUpgrade('stoneAxe'));
+document.getElementById('stonePickaxeBtn').addEventListener('click', () => purchaseUpgrade('stonePickaxe'));
+document.getElementById('mineIronOreBtn').addEventListener('click', () => performAction('mineIronOre'));
+
+
+document.getElementById('buildHammer').addEventListener('click', () => buildItem('hammer'));
+document.getElementById('buildAnvil').addEventListener('click', () => buildItem('anvil'));
+
+// Initialize
+updateResourceDisplay();
