@@ -64,12 +64,17 @@ function updateResourceDisplay() {
     document.getElementById('wood').innerText = resources.wood;
     document.getElementById('stone').innerText = resources.stone;
 
-    // Check if upgrades are affordable and enable/disable accordingly
-    document.getElementById('stoneAxe').style.display = (resources.wood >= upgrades.stoneAxe.requirement && resources.stone >= upgrades.stoneAxe.requirement) ? "block" : "none";
-    document.getElementById('stonePickaxe').style.display = (resources.wood >= upgrades.stonePickaxe.requirement && resources.stone >= upgrades.stonePickaxe.requirement) ? "block" : "none";
+    let showStoneAxe = resources.wood >= upgrades.stoneAxe.requirement && resources.stone >= upgrades.stoneAxe.requirement && !upgrades.stoneAxe.purchased;
+    let showStonePickaxe = resources.wood >= upgrades.stonePickaxe.requirement && resources.stone >= upgrades.stonePickaxe.requirement && !upgrades.stonePickaxe.purchased;
+
+    document.getElementById('stoneAxe').style.display = showStoneAxe ? "block" : "none";
+    document.getElementById('stoneAxeInfo').style.display = showStoneAxe ? "block" : "none";
     
-    document.getElementById('stoneAxe').disabled = (resources.wood < upgrades.stoneAxe.cost.wood || resources.stone < upgrades.stoneAxe.cost.stone || upgrades.stoneAxe.purchased);
-    document.getElementById('stonePickaxe').disabled = (resources.wood < upgrades.stonePickaxe.cost.wood || resources.stone < upgrades.stonePickaxe.cost.stone || upgrades.stonePickaxe.purchased);
+    document.getElementById('stonePickaxe').style.display = showStonePickaxe ? "block" : "none";
+    document.getElementById('stonePickaxeInfo').style.display = showStonePickaxe ? "block" : "none";
+    
+    document.getElementById('stoneAxe').disabled = resources.wood < upgrades.stoneAxe.cost.wood || resources.stone < upgrades.stoneAxe.cost.stone;
+    document.getElementById('stonePickaxe').disabled = resources.wood < upgrades.stonePickaxe.cost.wood || resources.stone < upgrades.stonePickaxe.cost.stone;
 }
 
 function gatherResource(type) {
