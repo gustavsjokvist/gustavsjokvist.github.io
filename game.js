@@ -45,17 +45,20 @@ function purchaseUpgrade(upgrade) {
         resources.stone -= upgrades[upgrade].cost.stone;
         
         upgrades[upgrade].purchased = true;
-        document.getElementById(upgrade).disabled = true;
-
+        document.getElementById(upgrade).style.display = "none";
+        
         if (upgrade === 'stoneAxe') {
             document.querySelector("button[onclick=\"gatherResource('wood')\"]").innerText = "Chop Sapling";
+            document.querySelector("p:contains('Change \"Gather Stick\" to \"Chop Sapling\"')").style.display = "none";
         } else if (upgrade === 'stonePickaxe') {
             document.querySelector("button[onclick=\"gatherResource('stone')\"]").innerText = "Mine Stone";
+            document.querySelector("p:contains('Change \"Gather Rock\" to \"Mine Stone\"')").style.display = "none";
         }
 
         updateResourceDisplay();
     }
 }
+
 
 function updateResourceDisplay() {
     document.getElementById('wood').innerText = resources.wood;
