@@ -1,34 +1,64 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
     background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-h1, h2 {
-    color: #333;
-    font-size: 20px;
+div {
+    margin-bottom: 15px;
+}
+
+button, progress {
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
 }
 
 button {
-    padding: 5px 10px;
-    margin-bottom: 5px;
-    font-size: 14px;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: white;
+    color: black;
+    border: 1px solid #4CAF50;
 }
 
 progress {
-    width: 20%;
-    height: 15px;
+    height: 20px;
+    border: none;
+    color: #4CAF50;
+}
+
+progress[value]::-webkit-progress-bar {
+    background-color: #eee;
+}
+
+progress[value]::-webkit-progress-value {
+    background-color: #4CAF50;
 }
 
 p {
-    margin: 2px 0;
-    font-size: 12px;
+    margin-bottom: 5px;
+    color: #333;
 }
 
-#stoneAxe, #stonePickaxe {
-    display: none;
-}
-
-.upgrade-info {
-    display: none;
+/* Additional Styling for Mobile View */
+@media only screen and (max-width: 600px) {
+    button, progress {
+        width: 90%;
+    }
 }
