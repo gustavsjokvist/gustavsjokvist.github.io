@@ -1,6 +1,6 @@
 let resources = {
-    wood: 0,
-    stone: 0,
+    wood: 20,
+    stone: 20,
     charcoal: 0,
     ironOre: 0,
     ironBar: 0
