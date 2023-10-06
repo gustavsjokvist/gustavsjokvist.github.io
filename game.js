@@ -49,7 +49,17 @@ function performAction(action) {
     actions[action] = true;  // Mark action as in-progress
     let actionDuration = 1000;  // Action takes 1000ms to perform
 
+    let progressBar = document.getElementById(`${action}Progress`);
+    progressBar.value = 0;
+
+    let progressInterval = setInterval(() => {
+        progressBar.value += 10;  // Incrementally increase progress bar
+    }, actionDuration / 10);  // Divide actionDuration by 10 for smooth progress
+    
+
     setTimeout(() => {
+        clearInterval(progressInterval);  // Clear the interval when action is complete
+        progressBar.value = 0;  // Reset progress bar
         switch (action) {
             case "gatherStick":
                 resources.wood += 1;
