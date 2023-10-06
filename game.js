@@ -44,22 +44,29 @@ let actions = {
 };
 
 function performAction(action) {
-    if (actions[action]) return;  // Prevent action if it's already in progress
+    // Additional safeguard to validate that action exists
+    if (!actions.hasOwnProperty(action) || actions[action]) return;
 
-    actions[action] = true;  // Mark action as in-progress
-    let actionDuration = 1000;  // Action takes 1000ms to perform
+    actions[action] = true;
+    let actionDuration = 1000;
 
     let progressBar = document.getElementById(`${action}Progress`);
+    if (!progressBar) {
+        console.error(`No progress bar found for action: ${action}`);
+        return;
+    }
+    progressBar.style.display = 'block'; // Ensure progress bar is visible
     progressBar.value = 0;
 
     let progressInterval = setInterval(() => {
-        progressBar.value += 10;  // Incrementally increase progress bar
-    }, actionDuration / 10);  // Divide actionDuration by 10 for smooth progress
-    
+        progressBar.value += 10;
+    }, actionDuration / 10);
 
     setTimeout(() => {
-        clearInterval(progressInterval);  // Clear the interval when action is complete
-        progressBar.value = 0;  // Reset progress bar
+        clearInterval(progressInterval);
+        progressBar.value = 0;
+        progressBar.style.display = 'none'; // Hide progress bar when action is complete
+
         switch (action) {
             case "gatherStick":
                 resources.wood += 1;
@@ -97,10 +104,18 @@ function purchaseUpgrade(upgradeKey) {
 
     upgrade.purchased = true;
 
-    // Logic for changing actions if applicable
-    if (upgrade.actionChange) {
-        document.getElementById(`${upgrade.actionChange.prev}Btn`).style.display = 'none';
-        document.getElementById(`${upgrade.actionChange.next}Btn`).style.display = 'block';
+   if (upgrade.actionChange) {
+        let prevBtn = document.getElementById(`${upgrade.actionChange.prev}Btn`);
+        let nextBtn = document.getElementById(`${upgrade.actionChange.next}Btn`);
+        if (!prevBtn || !nextBtn) {
+            console.error(`Buttons for action change not found: ${upgrade.actionChange.prev} or ${upgrade.actionChange.next}`);
+            return;
+        }
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+
+        // IMPORTANT: Attach event listener to new action button!
+        nextBtn.addEventListener('click', () => performAction(upgrade.actionChange.next));
     }
 
     // Logic for unlocking resources
@@ -146,25 +161,53 @@ function smeltIron() {
 }
 
 function updateResourceDisplay() {
-    document.getElementById('woodCount').innerText = `Wood: ${resources.wood}`;
-    document.getElementById('stoneCount').innerText = `Stone: ${resources.stone}`;
-    document.getElementById('charcoalCount').innerText = `Charcoal: ${resources.charcoal}`;
-    document.getElementById('ironOreCount').innerText = `Iron Ore: ${resources.ironOre}`;
-    document.getElementById('ironBarCount').innerText = `Iron Bar: ${resources.ironBar}`;
+    // Resource elements
+    let resourceElements = {
+        woodCount: `Wood: ${resources.wood}`,
+        stoneCount: `Stone: ${resources.stone}`,
+        charcoalCount: `Charcoal: ${resources.charcoal}`,
+        ironOreCount: `Iron Ore: ${resources.ironOre}`,
+        ironBarCount: `Iron Bar: ${resources.ironBar}`
+    };
+
+    // Updating resource counts
+    for (let [elemId, text] of Object.entries(resourceElements)) {
+        let element = document.getElementById(elemId);
+        if (!element) {
+            console.error(`Element ${elemId} not found!`);
+            continue;
+        }
+        element.innerText = text;
+    }
 
     // Upgrade buttons: Display and enable/disable based on conditions
     for (const upgradeKey in upgrades) {
         const upgrade = upgrades[upgradeKey];
-        document.getElementById(`${upgradeKey}Btn`).style.display = canAfford(upgrade.cost) && !upgrade.purchased ? 'block' : 'none';
+        let btnElement = document.getElementById(`${upgradeKey}Btn`);
+        if (!btnElement) {
+            console.error(`Upgrade button element ${upgradeKey}Btn not found!`);
+            continue;
+        }
+        btnElement.style.display = canAfford(upgrade.cost) && !upgrade.purchased ? 'block' : 'none';
     }
 
     // Item buttons: Display and enable/disable based on conditions
-    document.getElementById('buildHammer').style.display = canAfford(resourceCosts.hammer) && !items.hammer ? 'block' : 'none';
-    document.getElementById('hammerInfo').style.display = !items.hammer ? 'block' : 'none';
+    let hammerBtn = document.getElementById('buildHammer');
+    let hammerInfo = document.getElementById('hammerInfo');
+    let anvilBtn = document.getElementById('buildAnvil');
+    let anvilInfo = document.getElementById('anvilInfo');
 
-    document.getElementById('buildAnvil').style.display = canAfford(resourceCosts.anvil) && items.hammer && !items.anvil ? 'block' : 'none';
-    document.getElementById('anvilInfo').style.display = items.hammer && !items.anvil ? 'block' : 'none';
+    if (!hammerBtn || !hammerInfo || !anvilBtn || !anvilInfo) {
+        console.error("Some item elements are not found!");
+    } else {
+        hammerBtn.style.display = canAfford(resourceCosts.hammer) && !items.hammer ? 'block' : 'none';
+        hammerInfo.style.display = !items.hammer ? 'block' : 'none';
+
+        anvilBtn.style.display = canAfford(resourceCosts.anvil) && items.hammer && !items.anvil ? 'block' : 'none';
+        anvilInfo.style.display = items.hammer && !items.anvil ? 'block' : 'none';
+    }
 }
+
 
 function canAfford(cost) {
     for (const resource in cost) {
@@ -175,17 +218,14 @@ function canAfford(cost) {
     return true;
 }
 
-// Event listeners
-document.getElementById('gatherStickBtn').addEventListener('click', () => performAction('gatherStick'));
-document.getElementById('gatherRockBtn').addEventListener('click', () => performAction('gatherRock'));
+// Ensure event listeners are attached only after DOM content is fully loaded
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('gatherStickBtn').addEventListener('click', () => performAction('gatherStick'));
+    document.getElementById('gatherRockBtn').addEventListener('click', () => performAction('gatherRock'));
 
-document.getElementById('stoneAxeBtn').addEventListener('click', () => purchaseUpgrade('stoneAxe'));
-document.getElementById('stonePickaxeBtn').addEventListener('click', () => purchaseUpgrade('stonePickaxe'));
-document.getElementById('mineIronOreBtn').addEventListener('click', () => performAction('mineIronOre'));
-
-
-document.getElementById('buildHammer').addEventListener('click', () => buildItem('hammer'));
-document.getElementById('buildAnvil').addEventListener('click', () => buildItem('anvil'));
-
-// Initialize
-updateResourceDisplay();
+    document.getElementById('stoneAxeBtn').addEventListener('click', () => purchaseUpgrade('stoneAxe'));
+    document.getElementById('stonePickaxeBtn').addEventListener('click', () => purchaseUpgrade('stonePickaxe'));
+    
+    // Initialize
+    updateResourceDisplay();
+});
