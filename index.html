@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Idle Factory Game</title>
     <style>
-        button {
+        button,
+        progress {
+            display: block;
+            width: 100%;
             margin-bottom: 5px;
         }
         p {
@@ -13,6 +17,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div>
@@ -29,9 +34,6 @@
     </div>
     <!-- ... and similarly for other buttons ... -->
 
-
-
-    
     <p id="woodCount">Wood: 0</p>
     <p id="stoneCount">Stone: 0</p>
     <p id="charcoalCount" style="display:none;">Charcoal: 0</p>
@@ -44,4 +46,5 @@
 
     <script src="game.js"></script>
 </body>
+
 </html>
