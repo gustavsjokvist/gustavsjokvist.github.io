@@ -1,6 +1,6 @@
 let resources = {
-    wood: 20,
-    stone: 20,
+    wood: 0,
+    stone: 0,
     charcoal: 0,
     ironOre: 0,
     ironBar: 0
@@ -51,16 +51,12 @@ function performAction(action) {
     let actionDuration = 1000;
 
     let progressBar = document.getElementById(`${action}Progress`);
-    if (!progressBar) {
-        console.error(`No progress bar found for action: ${action}`);
-        return;
-    }
-    progressBar.style.display = 'block'; // Ensure progress bar is visible
     progressBar.value = 0;
-
+    
     let progressInterval = setInterval(() => {
-        progressBar.value += 10;
-    }, actionDuration / 10);
+        progressBar.value += 10;  // Incrementally increase progress bar
+    }, actionDuration / 10);  // Divide actionDuration by 10 for smooth progress
+    
 
     setTimeout(() => {
         clearInterval(progressInterval);
