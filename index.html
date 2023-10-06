@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>AutoEmpire</title>
 </head>
 <body>
-
     <h1>Resource Gathering</h1>
     
     <button onclick="gatherResource('wood')">Gather Stick</button>
@@ -16,8 +16,15 @@
     <button onclick="gatherResource('stone')">Gather Rock</button>
     <progress id="stoneProgress" value="0" max="100"></progress>
     <p>Stone: <span id="stone">0</span></p>
+    
+    <h2>Upgrades</h2>
+
+    <button id="stoneAxe" onclick="purchaseUpgrade('stoneAxe')" disabled>Stone Axe</button>
+    <p>Change "Gather Stick" to "Chop Sapling" and get 2 wood per action. Costs: 10 wood, 10 stone.</p>
+
+    <button id="stonePickaxe" onclick="purchaseUpgrade('stonePickaxe')" disabled>Stone Pickaxe</button>
+    <p>Change "Gather Rock" to "Mine Stone" and get 2 stone per action. Costs: 10 wood, 10 stone.</p>
 
     <script src="game.js"></script>
-
 </body>
 </html>
