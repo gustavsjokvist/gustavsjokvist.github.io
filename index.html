@@ -10,9 +10,11 @@
     <h1>Resource Gathering</h1>
     
     <button onclick="gatherResource('wood')">Gather Stick</button>
+    <progress id="woodProgress" value="0" max="100"></progress>
     <p>Wood: <span id="wood">0</span></p>
     
     <button onclick="gatherResource('stone')">Gather Rock</button>
+    <progress id="stoneProgress" value="0" max="100"></progress>
     <p>Stone: <span id="stone">0</span></p>
 
     <script src="game.js"></script>
