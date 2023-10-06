@@ -1,16 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Clicker Game</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoEmpire</title>
 </head>
 <body>
-    <div class="game-container">
-        <h1>Clicker Game</h1>
-        <button id="click-button">Click me!</button>
-        <p id="score">Score: 0</p>
-    </div>
+
+    <h1>Resource Gathering</h1>
+    
+    <button onclick="gatherResource('wood')">Gather Stick</button>
+    <p>Wood: <span id="wood">0</span></p>
+    
+    <button onclick="gatherResource('stone')">Gather Rock</button>
+    <p>Stone: <span id="stone">0</span></p>
 
     <script src="game.js"></script>
+
 </body>
 </html>
