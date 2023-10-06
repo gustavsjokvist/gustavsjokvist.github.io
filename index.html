@@ -3,44 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>AutoEmpire</title>
+    <title>Idle Factory Game</title>
+    <style>
+        button {
+            margin-bottom: 5px;
+        }
+        p {
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Resource Gathering</h1>
-    
-    <button onclick="gatherResource('wood')">Gather Stick</button>
-    <progress id="woodProgress" value="0" max="100"></progress>
-    <p>Wood: <span id="wood">0</span></p>
-    
-    <button onclick="gatherResource('stone')">Gather Rock</button>
-    <progress id="stoneProgress" value="0" max="100"></progress>
-    <p>Stone: <span id="stone">0</span></p>
 
-    <p id="ironOreCount" style="display:none;">Iron Ore: 0</p>
+    <button id="gatherStickBtn">Gather Stick</button>
+    <button id="gatherRockBtn">Gather Rock</button>
+    <!-- Additional action buttons should be added as they become available -->
     <button id="mineIronOreBtn" style="display:none;">Mine Iron Ore</button>
 
-    
-    <h2>Upgrades</h2>
+    <p id="woodCount">Wood: 0</p>
+    <p id="stoneCount">Stone: 0</p>
+    <p id="charcoalCount" style="display:none;">Charcoal: 0</p>
+    <p id="ironOreCount" style="display:none;">Iron Ore: 0</p>
+    <p id="ironBarCount" style="display:none;">Iron Bar: 0</p>
 
-    <button id="stoneAxe" onclick="purchaseUpgrade('stoneAxe')" disabled>Stone Axe</button>
-    <p class="upgrade-info" id="stoneAxeInfo">Change "Gather Stick" to "Chop Sapling" and get 2 wood per action. Costs: 10 wood, 10 stone.</p>
+    <button id="stoneAxeBtn" style="display:none;">Buy Stone Axe</button>
+    <button id="stonePickaxeBtn" style="display:none;">Buy Stone Pickaxe</button>
+    <!-- Additional upgrade buttons should be added as they become available -->
 
-    <button id="stonePickaxe" onclick="purchaseUpgrade('stonePickaxe')" disabled>Stone Pickaxe</button>
-    <p class="upgrade-info" id="stonePickaxeInfo">Change "Gather Rock" to "Mine Stone" and get 2 stone per action. Costs: 10 wood, 10 stone.</p>
-
-    <p id="ironOre" style="display:none;">Iron Ore: 0</p>
-    <p id="ironBar" style="display:none;">Iron Bar: 0</p>
-    
-    <button id="smeltIron" onclick="smeltIron()" style="display:none;">Smelt Iron</button>
-    <p id="smeltIronInfo" style="display:none;">Convert 2 iron ore and 2 charcoal to 1 iron bar.</p>
-
-    <button id="buildHammer" onclick="buildItem('hammer')" style="display:none;">Build Hammer</button>
-    <p id="hammerInfo" style="display:none;">Build a hammer using 3 iron bars and 20 wood.</p>
-    
-    <button id="buildAnvil" onclick="buildItem('anvil')" style="display:none;">Build Anvil</button>
-    <p id="anvilInfo" style="display:none;">Build an anvil using 10 iron bars. Requires a hammer.</p>
-    
-    <script src="game.js"></script>
+    <script src="your_javascript_file.js"></script>
 </body>
 </html>
